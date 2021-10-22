@@ -1,3 +1,5 @@
+from urllib.parse import urljoin
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -5,29 +7,34 @@ from selenium.webdriver.support.ui import WebDriverWait
 import settings
 from dcv import storage, utils
 
+webdriver = utils.init_webdriver()
 
-class ODLP_Handler:
-    '''Open Data La Palma Handler'''
 
-    def __init__(self, url=settings.ODLP_BASE_URL):
-        self.driver = utils.init_webdriver()
+class FeatureLayers:
+    def __init__(self, url=settings.DRON_PERIMETER_LAYERS_URL):
         self.url = url
-        self.results = self.get_all_results()
+        self.layers = self.get_all_layers()
 
-    def get_all_results(self):
-        self.driver.get(self.url)
-        search_results = WebDriverWait(self.driver, 10).until(
+    def get_all_layers(self):
+        webdriver.get(self.url)
+        search_layers = WebDriverWait(webdriver, 10).until(
             EC.presence_of_element_located((By.ID, "search-results"))
         )
-        return search_results.find_elements_by_class_name("result-name")
+        return search_layers.find_elements_by_class_name("result-name")
 
-    def get_unchecked_results(self):
-        for result in self.results:
-            result_url = result.get_attribute('href')
-            if result_url not in storage.get_value(
+    def get_unchecked_layers(self):
+        for layer in self.layers:
+            layer_url = layer.get_attribute('href')
+            if layer_url not in storage.get_value(
                 settings.CHECKED_RESULTS_API_KEY, default=''
             ):
-                yield result
+                full_layer_url = urljoin(settings.ODLP_BASE_URL, layer_url)
+                yield FeatureLayer(full_layer_url)
 
-    def __del__(self):
-        self.driver.quit()
+
+class FeatureLayer:
+    def __init__(self, layer_url: str):
+        self.layer_url = layer_url
+
+    def get_shape_download_url(self):
+        webdriver.get(self.layer_url)

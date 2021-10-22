@@ -1,4 +1,5 @@
 from pathlib import Path
+from urllib.parse import urljoin
 
 from prettyconf import config
 
@@ -6,16 +7,16 @@ PROJECT_DIR = Path(__file__).resolve().parent
 PROJECT_NAME = PROJECT_DIR.name
 
 # Open Data La Palma
-ODLP_BASE_URL = config(
-    "ODLP_BASE_URL",
-    default=(
-        "https://www.opendatalapalma.es/search?collection=Dataset"
-        "&q=perimetro%20dron&sort=-modified&type=feature%20layer"
-    ),
+ODLP_BASE_URL = config('ODLP_BASE_URL', default='https://www.opendatalapalma.es/')
+DRON_PERIMETER_LAYERS_REL_URL = config(
+    'DRON_PERIMETER_LAYERS_REL_URL',
+    default='/search?collection=Dataset'
+    '&q=perimetro%20dron&sort=-modified&type=feature%20layer',
 )
+DRON_PERIMETER_LAYERS_URL = urljoin(ODLP_BASE_URL, DRON_PERIMETER_LAYERS_REL_URL)
 
 KEYVALUE_API_URL = config('KEYVALUE_API_URL')
 KEYVALUE_API_NAMESPACE = config('KEYVALUE_API_NAMESPACE', default=PROJECT_NAME)
 CHECKED_RESULTS_API_KEY = config('CHECKED_RESULTS_API_KEY', default='checked-results')
 
-SELENIUM_HEADLESS = config('SELENIUM_HEADLESS', default=True, cast=int)
+SELENIUM_HEADLESS = config('SELENIUM_HEADLESS', default=True, cast=lambda v: bool(int(v)))
