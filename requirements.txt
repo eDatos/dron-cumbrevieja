@@ -1,2 +1,3 @@
 selenium==3.14.1
 prettyconf
+requests
