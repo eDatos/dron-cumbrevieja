@@ -1,5 +1,6 @@
 import inspect
 import os
+from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
@@ -7,13 +8,15 @@ from selenium.webdriver.firefox.options import Options
 import settings
 
 
-def init_webdriver(headless=settings.SELENIUM_HEADLESS):
+def init_webdriver(
+    headless=settings.SELENIUM_HEADLESS, downloads_dir: Path = settings.DOWNLOADS_DIR
+):
     options = Options()
     options.headless = headless
     profile = webdriver.FirefoxProfile()
-    profile.set_preference("browser.download.folderList", 2)
-    profile.set_preference("browser.download.dir", "downloads")
-    profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/zip")
+    profile.set_preference('browser.download.folderList', 2)
+    profile.set_preference('browser.download.dir', str(downloads_dir))
+    profile.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/zip')
     return webdriver.Firefox(
         options=options, firefox_profile=profile, service_log_path=os.devnull
     )

@@ -20,3 +20,5 @@ KEYVALUE_API_NAMESPACE = config('KEYVALUE_API_NAMESPACE', default=PROJECT_NAME)
 CHECKED_RESULTS_API_KEY = config('CHECKED_RESULTS_API_KEY', default='checked-results')
 
 SELENIUM_HEADLESS = config('SELENIUM_HEADLESS', default=True, cast=lambda v: bool(int(v)))
+
+DOWNLOADS_DIR = config('DOWNLOADS_DIR', default=PROJECT_DIR / 'downloads')
