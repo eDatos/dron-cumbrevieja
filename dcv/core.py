@@ -64,9 +64,17 @@ class FeatureLayer:
         shapefile_download_button = webdriver.execute_script(script, shape_download_card)
         shapefile_download_button.click()
 
+        self.layer_file = utils.rename_newest_file(
+            settings.DOWNLOADS_DIR, self.slug, keep_existing_suffix=True
+        )
+
     @property
     def hash(self):
         return hashlib.md5(self.layer_url.encode()).hexdigest()
+
+    @property
+    def slug(self):
+        return self.layer_url.rstrip('/').split('/')[-1]
 
     @staticmethod
     def get_checked_layers() -> list:
