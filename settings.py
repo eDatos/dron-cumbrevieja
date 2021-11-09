@@ -22,3 +22,7 @@ CHECKED_RESULTS_API_KEY = config('CHECKED_RESULTS_API_KEY', default='checked-res
 SELENIUM_HEADLESS = config('SELENIUM_HEADLESS', default=True, cast=lambda v: bool(int(v)))
 
 DOWNLOADS_DIR = config('DOWNLOADS_DIR', default=PROJECT_DIR / 'downloads', cast=Path)
+
+LOGFILE = config('LOGFILE', default=PROJECT_DIR / (PROJECT_NAME + '.log'), cast=Path)
+LOGFILE_SIZE = config('LOGFILE_SIZE', cast=float, default=1e6)
+LOGFILE_BACKUP_COUNT = config('LOGFILE_BACKUP_COUNT', cast=int, default=3)

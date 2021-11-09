@@ -1,5 +1,7 @@
 from dcv import core, utils
 
+logger = utils.init_logger()
+
 try:
     utils.prepare_downloads_dir()
     feature_layers = core.FeatureLayers()
