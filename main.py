@@ -14,20 +14,20 @@ logger = utils.init_logger()
 @app.command()
 def run(
     verbose: bool = typer.Option(
-        False, '--verbose', '-v', show_default=False, help='Loglevel increased to debug'
+        False, '--verbose', '-v', show_default=False, help='Loglevel increased to debug.'
     ),
     clean: bool = typer.Option(
         False,
         '--clean',
         '-x',
         show_default=False,
-        help='Remove download folder after execution',
+        help='Remove download folder after execution.',
     ),
     max_layers: int = typer.Option(
         100,
         '--max-layers',
         '-m',
-        help='Maximum number of layers to be retrieved',
+        help='Maximum number of layers to be retrieved.',
     ),
     ignore_checked_layers: bool = typer.Option(
         False,
@@ -37,7 +37,7 @@ def run(
         help='Ignore checked layers. Process everything.',
     ),
     notify: bool = typer.Option(
-        False, '--notify', '-n', show_default=False, help='Notify shapefile via email'
+        False, '--notify', '-n', show_default=False, help='Notify shapefile via email.'
     ),
 ):
     logger.setLevel(logzero.DEBUG if verbose else logzero.INFO)
