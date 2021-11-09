@@ -1,3 +1,5 @@
+import hashlib
+import json
 from urllib.parse import urljoin
 
 from selenium.webdriver.common.by import By
@@ -28,12 +30,11 @@ class FeatureLayers:
 
     def get_unchecked_layers(self):
         '''Generator with urls for unchecked layers'''
-        for layer_url in self.layers:
-            if layer_url not in storage.get_value(
-                settings.CHECKED_RESULTS_API_KEY, default=''
-            ):
-                full_layer_url = urljoin(settings.ODLP_BASE_URL, layer_url)
-                yield FeatureLayer(full_layer_url)
+        for layer_path in self.layers:
+            layer_url = urljoin(settings.ODLP_BASE_URL, layer_path)
+            layer = FeatureLayer(layer_url)
+            if not layer.is_checked():
+                yield layer
 
 
 class FeatureLayer:
@@ -62,3 +63,22 @@ class FeatureLayer:
         script = "return arguments[0].shadowRoot.querySelector('calcite-button')"
         shapefile_download_button = webdriver.execute_script(script, shape_download_card)
         shapefile_download_button.click()
+
+    @property
+    def hash(self):
+        return hashlib.md5(self.layer_url.encode()).hexdigest()
+
+    @staticmethod
+    def get_checked_layers() -> list:
+        return storage.get_value(
+            settings.CHECKED_RESULTS_API_KEY, default=[], cast=json.loads
+        )
+
+    def mark_as_checked(self):
+        checked_layers = self.get_checked_layers()
+        checked_layers.append(self.hash)
+        storage.set_value(settings.CHECKED_RESULTS_API_KEY, json.dumps(checked_layers))
+
+    def is_checked(self):
+        checked_layers = self.get_checked_layers()
+        return self.hash in checked_layers

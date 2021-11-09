@@ -21,4 +21,4 @@ CHECKED_RESULTS_API_KEY = config('CHECKED_RESULTS_API_KEY', default='checked-res
 
 SELENIUM_HEADLESS = config('SELENIUM_HEADLESS', default=True, cast=lambda v: bool(int(v)))
 
-DOWNLOADS_DIR = config('DOWNLOADS_DIR', default=PROJECT_DIR / 'downloads')
+DOWNLOADS_DIR = config('DOWNLOADS_DIR', default=PROJECT_DIR / 'downloads', cast=Path)
