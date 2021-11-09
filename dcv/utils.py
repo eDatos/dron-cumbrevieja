@@ -2,7 +2,6 @@ import glob
 import inspect
 import os
 import re
-import shutil
 from pathlib import Path
 
 import logzero
@@ -63,11 +62,6 @@ def qualify_key(func):
         return func(*args, **kwargs)
 
     return wrapper
-
-
-def prepare_downloads_dir(downloads_dir=settings.DOWNLOADS_DIR):
-    shutil.rmtree(settings.DOWNLOADS_DIR, ignore_errors=True)
-    settings.DOWNLOADS_DIR.mkdir()
 
 
 def rename_newest_file(

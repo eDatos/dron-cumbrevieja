@@ -14,9 +14,11 @@ webdriver = utils.init_webdriver()
 
 
 class FeatureLayers:
-    def __init__(self, url=settings.DRON_PERIMETER_LAYERS_URL):
+    def __init__(self, url=settings.DRON_PERIMETER_LAYERS_URL, ignore_checked_layers=False):
         self.url = url
         self.layers = self.get_all_layers()
+        self.ignore_checked_layers = ignore_checked_layers
+        settings.DOWNLOADS_DIR.mkdir(exist_ok=True)
 
     def get_all_layers(self):
         '''Returns a list with urls for all layers'''
@@ -35,10 +37,9 @@ class FeatureLayers:
         logger.info('Getting unchecked layers')
         for layer_path in self.layers:
             layer_url = urljoin(settings.ODLP_BASE_URL, layer_path)
-            logger.debug(layer_url)
             layer = FeatureLayer(layer_url)
-            if not layer.is_checked():
-                logger.debug('Layer unchecked! Passing for processing')
+            if self.ignore_checked_layers or not layer.is_checked():
+                logger.debug(f'Passing layer for processing: {layer_url}')
                 yield layer
 
 
@@ -72,7 +73,7 @@ class FeatureLayer:
         logger.debug('Clicking download button for shapefile')
         shapefile_download_button.click()
 
-        logger.debug(f'Assigning {self.slug} to downloaded file')
+        logger.debug(f'Assigning name {self.slug} to downloaded file')
         self.layer_file = utils.rename_newest_file(
             settings.DOWNLOADS_DIR, self.slug, keep_existing_suffix=True
         )
