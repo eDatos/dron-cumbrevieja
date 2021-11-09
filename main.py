@@ -36,6 +36,9 @@ def run(
         show_default=False,
         help='Ignore checked layers. Process everything.',
     ),
+    notify: bool = typer.Option(
+        False, '--notify', '-n', show_default=False, help='Notify shapefile via email'
+    ),
 ):
     logger.setLevel(logzero.DEBUG if verbose else logzero.INFO)
     try:
@@ -44,11 +47,15 @@ def run(
         for layer in itertools.islice(layers, 0, max_layers):
             layer.download_shapefile()
             layer.mark_as_checked()
+            if notify:
+                layer.notify()
     except Exception as err:
         logger.error(str(err).strip())
     finally:
-        logger.debug('Quiting webdriver')
+        logger.debug('Quiting webdriver handler')
         core.webdriver.quit()
+        logger.debug('Quiting SMTP handler')
+        core.smtp.quit()
         if clean:
             logger.debug('Cleaning downloads directory')
             shutil.rmtree(settings.DOWNLOADS_DIR, ignore_errors=True)
