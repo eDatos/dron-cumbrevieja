@@ -1,4 +1,3 @@
-import itertools
 import shutil
 
 import logzero
@@ -24,10 +23,10 @@ def run(
         help='Remove download folder after execution.',
     ),
     max_layers: int = typer.Option(
-        100,
+        settings.MAX_LAYERS_TO_PROCESS,
         '--max-layers',
         '-m',
-        help='Maximum number of layers to be retrieved.',
+        help='Maximum number of layers to be processed.',
     ),
     ignore_checked_layers: bool = typer.Option(
         False,
@@ -42,9 +41,11 @@ def run(
 ):
     logger.setLevel(logzero.DEBUG if verbose else logzero.INFO)
     try:
-        feature_layers = core.FeatureLayers(ignore_checked_layers=ignore_checked_layers)
-        layers = feature_layers.get_unchecked_layers()
-        for layer in itertools.islice(layers, 0, max_layers):
+        layers_handler = core.LayersHandler(
+            ignore_checked_layers=ignore_checked_layers, max_layers_to_process=max_layers
+        )
+        layers = layers_handler.get_unchecked_layers()
+        for layer in layers:
             layer.download_shapefile()
             layer.mark_as_checked()
             if notify:

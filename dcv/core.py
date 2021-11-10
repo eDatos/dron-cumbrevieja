@@ -20,11 +20,17 @@ smtp = smtplib.SMTP(settings.SMTP_SERVER, port=settings.SMTP_PORT)
 smtp.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
 
 
-class FeatureLayers:
-    def __init__(self, url=settings.DRON_PERIMETER_LAYERS_URL, ignore_checked_layers=False):
+class LayersHandler:
+    def __init__(
+        self,
+        url=settings.DRON_PERIMETER_LAYERS_URL,
+        ignore_checked_layers=False,
+        max_layers_to_process=settings.MAX_LAYERS_TO_PROCESS,
+    ):
         self.url = url
         self.layers = self.get_all_layers()
         self.ignore_checked_layers = ignore_checked_layers
+        self.max_layers_to_process = max_layers_to_process
         settings.DOWNLOADS_DIR.mkdir(exist_ok=True)
 
     def get_all_layers(self):
@@ -42,12 +48,16 @@ class FeatureLayers:
     def get_unchecked_layers(self):
         '''Generator with urls for unchecked layers'''
         logger.info('Getting unchecked layers')
+        unchecked_layers = []
         for layer_path in self.layers:
             layer_url = urljoin(settings.ODLP_BASE_URL, layer_path)
             layer = FeatureLayer(layer_url)
             if self.ignore_checked_layers or not layer.is_checked():
                 logger.debug(f'Passing layer for processing: {layer_url}')
-                yield layer
+                unchecked_layers.append(layer)
+                if len(unchecked_layers) == self.max_layers_to_process:
+                    break
+        return unchecked_layers
 
 
 class FeatureLayer:
@@ -100,7 +110,7 @@ class FeatureLayer:
         )
 
     def mark_as_checked(self):
-        logger.info('Marking layer as checked')
+        logger.debug('Marking layer as checked')
         checked_layers = self.get_checked_layers()
         checked_layers.append(self.hash)
         storage.set_value(settings.CHECKED_RESULTS_API_KEY, json.dumps(checked_layers))
