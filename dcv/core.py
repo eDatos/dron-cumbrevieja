@@ -27,6 +27,7 @@ class LayersHandler:
         ignore_checked_layers=False,
         max_layers_to_process=settings.MAX_LAYERS_TO_PROCESS,
     ):
+        logger.debug(f'BASE URL: {url}')
         self.url = url
         self.layers = self.get_all_layers()
         self.ignore_checked_layers = ignore_checked_layers
@@ -52,11 +53,14 @@ class LayersHandler:
         for layer_path in self.layers:
             layer_url = urljoin(settings.ODLP_BASE_URL, layer_path)
             layer = FeatureLayer(layer_url)
+            logger.debug(layer)
             if self.ignore_checked_layers or not layer.is_checked():
-                logger.debug(f'Passing layer for processing: {layer_url}')
+                logger.debug('└ Passing layer for processing')
                 unchecked_layers.append(layer)
                 if len(unchecked_layers) == self.max_layers_to_process:
                     break
+            else:
+                logger.debug('└ Layer is already checked. Omitting')
         return unchecked_layers
 
 
@@ -148,3 +152,6 @@ class FeatureLayer:
 
         logger.info('Sending message with attached files')
         smtp.sendmail(send_from, send_to, msg.as_string())
+
+    def __str__(self):
+        return self.slug
