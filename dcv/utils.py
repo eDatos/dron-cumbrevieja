@@ -1,5 +1,4 @@
 import glob
-import inspect
 import os
 import re
 from pathlib import Path
@@ -49,19 +48,6 @@ def init_webdriver(
     return webdriver.Firefox(
         options=options, firefox_profile=profile, service_log_path=os.devnull
     )
-
-
-def qualify_key(func):
-    def wrapper(*args, **kwargs):
-        key = args[0]
-        default_namespace = inspect.signature(func).parameters.get('namespace').default
-        namespace = kwargs.get('namespace', default_namespace)
-        qualified_key = f'{namespace}:{key}'
-        args = list(args)
-        args[0] = qualified_key
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 def rename_newest_file(
