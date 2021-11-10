@@ -1,4 +1,5 @@
 import shutil
+from pathlib import Path
 
 import pytest
 
@@ -36,3 +37,10 @@ def feature_layer():
     return core.FeatureLayer(
         'https://www.opendatalapalma.es/datasets/perimetro-dron-211108-1300/'
     )
+
+
+@pytest.fixture
+def tempfile():
+    tempfile = Path(__file__).parent / 'matraca.txt'
+    tempfile.write_text('matraca')
+    return tempfile
