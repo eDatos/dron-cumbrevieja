@@ -69,7 +69,7 @@ class FeatureLayer:
         self.layer_url = layer_url
 
     def download_shapefile(self):
-        logger.info('Downloading shapefile')
+        logger.info(f'↓ Downloading shapefile for "{self.id}"')
         webdriver.get(self.layer_url)
         hub_toolbar = WebDriverWait(webdriver, 10).until(
             EC.presence_of_element_located((By.ID, 'hub-toolbar'))
@@ -88,24 +88,30 @@ class FeatureLayer:
             webdriver.find_elements_by_tag_name('hub-download-card')
         )[2]
 
+        num_downloaded_files = utils.num_files_in_folder(settings.DOWNLOADS_DIR)
+
         # Manage shadow elements with javascript
         script = "return arguments[0].shadowRoot.querySelector('calcite-button')"
         shapefile_download_button = webdriver.execute_script(script, shape_download_card)
         logger.debug('Clicking download button for shapefile')
         shapefile_download_button.click()
 
-        logger.debug(f'Assigning name {self.slug} to downloaded file')
+        if num_downloaded_files == utils.num_files_in_folder(settings.DOWNLOADS_DIR):
+            return None
+
+        logger.debug('Getting downloaded file')
         self.layer_file = utils.rename_newest_file(
-            settings.DOWNLOADS_DIR, self.slug, keep_existing_suffix=True
+            settings.DOWNLOADS_DIR, self.id, keep_existing_suffix=True
         )
+        return self.layer_file
 
     @property
     def hash(self):
         return hashlib.md5(self.layer_url.encode()).hexdigest()
 
     @property
-    def slug(self):
-        return self.layer_url.rstrip('/').split('/')[-1]
+    def id(self):
+        return self.layer_url.rstrip('/').split('/')[-1].replace('-', '_')
 
     @staticmethod
     def get_checked_layers() -> list:
@@ -131,13 +137,13 @@ class FeatureLayer:
         msg = MIMEMultipart()
         msg['From'] = send_from
         msg['To'] = ','.join(send_to)
-        msg['Subject'] = f'Actualización Dron - Cumbre Vieja [{self.slug}]'
+        msg['Subject'] = f'Actualización Dron - Cumbre Vieja [{self.id}]'
 
         logger.debug('Building content')
         buf = []
         buf.append('Nueva actualización Dron - Cumbre Vieja')
         buf.append('Open Data La Palma')
-        buf.append(self.slug)
+        buf.append(self.id)
         content = '<br>'.join(buf)
         msg.attach(MIMEText(content, 'html'))
 
@@ -154,4 +160,4 @@ class FeatureLayer:
         smtp.sendmail(send_from, send_to, msg.as_string())
 
     def __str__(self):
-        return self.slug
+        return self.id

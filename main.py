@@ -46,10 +46,12 @@ def run(
         )
         layers = layers_handler.get_unchecked_layers()
         for layer in layers:
-            layer.download_shapefile()
-            layer.mark_as_checked()
-            if notify:
-                layer.notify()
+            if layer.download_shapefile():
+                layer.mark_as_checked()
+                if notify:
+                    layer.notify()
+            else:
+                logger.error('Shapefile is not available')
     except Exception as err:
         logger.error(str(err).strip())
     finally:
