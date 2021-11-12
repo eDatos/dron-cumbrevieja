@@ -6,6 +6,12 @@ Versions follow [Semantic Versioning](https://semver.org/) (`<major>.<minor>.<pa
 
 Released XXXX-XX-XX
 
+## Version 0.1.2
+
+Released 2021-11-12
+
+- Use underscores for downloaded shapefiles. [#3](https://github.com/eDatos/dron-cumbrevieja/issues/3)
+
 ## Version 0.1.1
 
 Released 2021-11-10
