@@ -50,18 +50,27 @@ def init_webdriver(
     )
 
 
+def get_newest_file(target_folder: Path):
+    '''Get the newest (last-modified) file in target_folder.'''
+    if list_of_files := glob.glob(str(target_folder / '*')):
+        newest_filename = max(list_of_files, key=os.path.getctime)
+        return Path(newest_filename)
+
+
 def rename_newest_file(
     target_folder: Path, replace_filename: str, *, keep_existing_suffix=False
 ) -> Path:
     '''Rename newest (last-modified) file in target_folder to replace_filename.
     If keep_existing_suffix is True, the suffix of the newest file remains.'''
-
-    list_of_files = glob.glob(str(target_folder / '*'))
-    newest_filename = max(list_of_files, key=os.path.getctime)
-    newest_file = Path(newest_filename)
+    newest_file = get_newest_file(target_folder)
 
     if keep_existing_suffix:
         replace_filename += newest_file.suffix
     replace_file = target_folder / replace_filename
 
     return newest_file.rename(replace_file)
+
+
+def num_files_in_folder(target_folder: Path):
+    list_of_files = glob.glob(str(target_folder / '*'))
+    return len(list_of_files)
