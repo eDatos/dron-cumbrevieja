@@ -69,7 +69,7 @@ class FeatureLayer:
         self.layer_url = layer_url
 
     def download_shapefile(self):
-        logger.info(f'Downloading shapefile for {self.id}')
+        logger.info(f'↓ Downloading shapefile for "{self.id}"')
         webdriver.get(self.layer_url)
         hub_toolbar = WebDriverWait(webdriver, 10).until(
             EC.presence_of_element_located((By.ID, 'hub-toolbar'))
