@@ -126,6 +126,8 @@ class FeatureLayer:
     @property
     def id(self):
         clean_url = self.layer_url.rstrip('/').split('/')[-1].replace('-', '_')
+        # drop layer time if exists
+        clean_url = re.sub(r'_\d{4}$', '', clean_url)
         clean_time = self.layer_time.replace(':', '')
         return f'{clean_url}_{clean_time}'
 
