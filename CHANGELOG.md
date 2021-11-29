@@ -6,6 +6,12 @@ Versions follow [Semantic Versioning](https://semver.org/) (`<major>.<minor>.<pa
 
 Released XXXX-XX-XX
 
+## Version 0.1.3
+
+Released 2021-11-29
+
+- Add scraped time to downloaded shapefiles. [#3](https://github.com/eDatos/dron-cumbrevieja/issues/4)
+
 ## Version 0.1.2
 
 Released 2021-11-12
