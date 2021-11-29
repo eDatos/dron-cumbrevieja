@@ -10,7 +10,7 @@ Released XXXX-XX-XX
 
 Released 2021-11-29
 
-- Add scraped time to downloaded shapefiles. [#3](https://github.com/eDatos/dron-cumbrevieja/issues/4)
+- Add scraped time to downloaded shapefiles. [#4](https://github.com/eDatos/dron-cumbrevieja/issues/4)
 
 ## Version 0.1.2
 
