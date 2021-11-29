@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 import smtplib
 from email import encoders
 from email.mime.base import MIMEBase
@@ -67,6 +68,18 @@ class LayersHandler:
 class FeatureLayer:
     def __init__(self, layer_url: str):
         self.layer_url = layer_url
+
+    def extract_layer_time(self):
+        logger.info(f'Extracting layer time for "{self.id}"')
+        self.layer_time = settings.DEFAULT_LAYER_TIME
+        webdriver.get(self.layer_url)
+        summary = WebDriverWait(webdriver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'content-summary'))
+        )
+        description = summary.find_element_by_tag_name('p')
+        if description:
+            if m := re.search(r'a las *(\d+:\d+)', description.text):
+                self.layer_time = m.group(1)
 
     def download_shapefile(self):
         logger.info(f'↓ Downloading shapefile for "{self.id}"')
