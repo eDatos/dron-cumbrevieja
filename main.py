@@ -46,7 +46,6 @@ def run(
         )
         layers = layers_handler.get_unchecked_layers()
         for layer in layers:
-            layer.extract_layer_time()
             if layer.download_shapefile():
                 layer.mark_as_checked()
                 if notify:

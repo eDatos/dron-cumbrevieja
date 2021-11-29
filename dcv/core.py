@@ -68,9 +68,10 @@ class LayersHandler:
 class FeatureLayer:
     def __init__(self, layer_url: str):
         self.layer_url = layer_url
+        self.extract_layer_time()
 
     def extract_layer_time(self):
-        logger.info(f'Extracting layer time for "{self.id}"')
+        logger.info('Extracting layer time')
         self.layer_time = settings.DEFAULT_LAYER_TIME
         webdriver.get(self.layer_url)
         summary = WebDriverWait(webdriver, 10).until(
@@ -124,7 +125,9 @@ class FeatureLayer:
 
     @property
     def id(self):
-        return self.layer_url.rstrip('/').split('/')[-1].replace('-', '_')
+        clean_url = self.layer_url.rstrip('/').split('/')[-1].replace('-', '_')
+        clean_time = self.layer_time.replace(':', '')
+        return f'{clean_url}_{clean_time}'
 
     @staticmethod
     def get_checked_layers() -> list:
