@@ -17,7 +17,9 @@ import settings
 from dcv import storage, utils
 
 webdriver = utils.init_webdriver()
-smtp = smtplib.SMTP(settings.SMTP_SERVER, port=settings.SMTP_PORT)
+smtp = smtplib.SMTP(
+    settings.SMTP_SERVER, port=settings.SMTP_PORT, timeout=settings.SMTP_CONNECTION_TIMEOUT
+)
 smtp.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
 
 

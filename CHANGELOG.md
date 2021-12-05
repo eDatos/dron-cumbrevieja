@@ -6,6 +6,8 @@ Versions follow [Semantic Versioning](https://semver.org/) (`<major>.<minor>.<pa
 
 Released XXXX-XX-XX
 
+- Add setting to set stmp connection timeout.
+
 ## Version 0.1.3
 
 Released 2021-11-29

@@ -37,3 +37,6 @@ SMTP_PASSWORD = config('SMTP_PASSWORD')
 MAX_LAYERS_TO_PROCESS = config('MAX_LAYERS_TO_PROCESS', default=100, cast=int)
 
 DEFAULT_LAYER_TIME = config('DEFAULT_LAYER_TIME', default='11:30')
+
+# seconds
+SMTP_CONNECTION_TIMEOUT = config('SMTP_CONNECTION_TIMEOUT', default=30 * 60, cast=int)
