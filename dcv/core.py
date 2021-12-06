@@ -17,10 +17,6 @@ import settings
 from dcv import storage, utils
 
 webdriver = utils.init_webdriver()
-smtp = smtplib.SMTP(
-    settings.SMTP_SERVER, port=settings.SMTP_PORT, timeout=settings.SMTP_CONNECTION_TIMEOUT
-)
-smtp.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
 
 
 class LayersHandler:
@@ -151,6 +147,13 @@ class FeatureLayer:
 
     def notify(self):
         logger.info('Initializing notification handler')
+        smtp = smtplib.SMTP(
+            settings.SMTP_SERVER,
+            port=settings.SMTP_PORT,
+            timeout=settings.SMTP_CONNECTION_TIMEOUT,
+        )
+        smtp.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
+
         send_from = settings.NOTIFICATION_FROM_ADDR
         send_to = settings.NOTIFICATION_TO_ADDRS
 
@@ -178,6 +181,8 @@ class FeatureLayer:
 
         logger.info('Sending message with attached files')
         smtp.sendmail(send_from, send_to, msg.as_string())
+
+        smtp.quit()
 
     def __str__(self):
         return self.id

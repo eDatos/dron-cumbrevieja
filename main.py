@@ -57,8 +57,6 @@ def run(
     finally:
         logger.debug('Quiting webdriver handler')
         core.webdriver.quit()
-        logger.debug('Quiting SMTP handler')
-        core.smtp.quit()
         if clean:
             logger.debug('Cleaning downloads directory')
             shutil.rmtree(settings.DOWNLOADS_DIR, ignore_errors=True)
